@@ -37,19 +37,19 @@ Gt4ConfluenceAPI >> createPageWithTitle: aTitle withBody: aBody inSpaceWithKey: 
 ]
 
 { #category : #find }
-Gt4ConfluenceAPI >> findDocumentationForClass: aClass inSpaceWithContentID: contentID [
-	| pathSegments |
+Gt4ConfluenceAPI >> findPageWithTitle: title inSpaceWithContentID: contentID [
+	| pathSegments response |
 
 	pathSegments := {
 	'rest'.
 	'api'.
 	'content'}.
 
-	^ ZnClient new
+	response :=  ZnClient new
 		url: (
 			url asZnUrl 
 			addPathSegments: pathSegments; 
-			queryAt: 'title' put: aClass name;
+			queryAt: 'title' put: title;
 			queryAt: 'spaceKey' put: contentID;
 			queryAt: 'expand' put: 'body.storage';
 			yourself);
@@ -57,6 +57,18 @@ Gt4ConfluenceAPI >> findDocumentationForClass: aClass inSpaceWithContentID: cont
 		headerAt: 'X-Atlassian-Token' put: 'nocheck';
 		get;
 		response.
+		
+	response isSuccess ifFalse: [ title, ' not found.' ].
+		
+	^ (((((STONJSON fromString: response contents) at: #results) at: 1) at: #body) at: #storage) at: #value.
+]
+
+{ #category : #initialization }
+Gt4ConfluenceAPI >> initialize [
+	url := nil.
+	username := nil.
+	password := nil.
+	
 ]
 
 { #category : #accessing }
