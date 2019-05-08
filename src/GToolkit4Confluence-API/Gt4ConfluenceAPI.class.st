@@ -38,7 +38,7 @@ Gt4ConfluenceAPI >> createPageWithTitle: aTitle withBody: aBody inSpaceWithKey: 
 
 { #category : #find }
 Gt4ConfluenceAPI >> findPageWithTitle: title inSpaceWithContentID: contentID [
-	| pathSegments response |
+	| pathSegments response results |
 
 	pathSegments := {
 	'rest'.
@@ -58,9 +58,13 @@ Gt4ConfluenceAPI >> findPageWithTitle: title inSpaceWithContentID: contentID [
 		get;
 		response.
 		
-	response isSuccess ifFalse: [ title, ' not found.' ].
+	response isSuccess ifFalse: [ ^ title, ' not found.' ].
+	
+	results := ((STONJSON fromString: response contents) at: #results).
+	
+	results isEmpty ifTrue: [ ^ title, ' not found.' ].
 		
-	^ (((((STONJSON fromString: response contents) at: #results) at: 1) at: #body) at: #storage) at: #value.
+	^ (((results at: 1) at: #body) at: #storage) at: #value.
 ]
 
 { #category : #initialization }
