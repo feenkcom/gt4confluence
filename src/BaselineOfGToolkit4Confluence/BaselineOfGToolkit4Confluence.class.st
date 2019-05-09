@@ -10,6 +10,6 @@ BaselineOfGToolkit4Confluence >> baseline: spec [
 	spec
 		for: #common
 		do: [
-			spec baseline: 'BaselineOfGToolkit' with: [ spec repository: 'github://feenkcom/gtoolkit/src' ].
+			spec baseline: 'GToolkit' with: [ spec repository: 'github://feenkcom/gtoolkit/src' ].
 			spec package: 'GToolkit4Confluence-API'. ]
 ]
