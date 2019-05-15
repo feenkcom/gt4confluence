@@ -1,5 +1,5 @@
 Class {
-	#name : #ConfluenceCredentialsSetup,
+	#name : #ConfluenceConnection,
 	#superclass : #Object,
 	#classInstVars : [
 		'uniqueInstance'
@@ -8,7 +8,7 @@ Class {
 }
 
 { #category : #accessing }
-ConfluenceCredentialsSetup class >> uniqueInstance [
+ConfluenceConnection class >> setup [
 	uniqueInstance ifNil: [ uniqueInstance := ConfluenceCredentials new ].
      ^ uniqueInstance
 ]
