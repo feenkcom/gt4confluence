@@ -2,9 +2,7 @@ Class {
 	#name : #Gt4ConfluenceAPI,
 	#superclass : #Object,
 	#instVars : [
-		'url',
-		'username',
-		'password'
+		'credentials'
 	],
 	#category : #'GToolkit4Confluence-API'
 }
@@ -14,8 +12,8 @@ Gt4ConfluenceAPI >> createPageWithTitle: aTitle withBody: aBody inSpaceWithKey: 
 	"creates a Confluence page with specified content"
 
 	^ ZnClient new
-		url: (url asZnUrl addPathSegments: #(rest api content) yourself);
-		username: username password: password;
+		url: (credentials url asZnUrl addPathSegments: #(rest api content) yourself);
+		username: credentials username password: credentials password;
 		accept: ZnMimeType applicationJson;
 		entity:
 			(ZnEntity
@@ -36,6 +34,16 @@ Gt4ConfluenceAPI >> createPageWithTitle: aTitle withBody: aBody inSpaceWithKey: 
 			response
 ]
 
+{ #category : #accessing }
+Gt4ConfluenceAPI >> credentials [
+	^ credentials
+]
+
+{ #category : #accessing }
+Gt4ConfluenceAPI >> credentials: anObject [
+	credentials := anObject
+]
+
 { #category : #find }
 Gt4ConfluenceAPI >> findPageWithTitle: title inSpaceWithContentID: contentID [
 	| pathSegments response results |
@@ -47,13 +55,13 @@ Gt4ConfluenceAPI >> findPageWithTitle: title inSpaceWithContentID: contentID [
 
 	response :=  ZnClient new
 		url: (
-			url asZnUrl 
+			credentials url asZnUrl 
 			addPathSegments: pathSegments; 
 			queryAt: 'title' put: title;
 			queryAt: 'spaceKey' put: contentID;
 			queryAt: 'expand' put: 'body.storage';
 			yourself);
-		username: username password: password;
+		username: credentials username password: credentials password;
 		headerAt: 'X-Atlassian-Token' put: 'nocheck';
 		get;
 		response.
@@ -65,24 +73,6 @@ Gt4ConfluenceAPI >> findPageWithTitle: title inSpaceWithContentID: contentID [
 	results isEmpty ifTrue: [ ^ title, ' not found.' ].
 		
 	^ (((results at: 1) at: #body) at: #storage) at: #value.
-]
-
-{ #category : #initialization }
-Gt4ConfluenceAPI >> initialize [
-	url := nil.
-	username := nil.
-	password := nil.
-	
-]
-
-{ #category : #accessing }
-Gt4ConfluenceAPI >> password [
-	^ password
-]
-
-{ #category : #accessing }
-Gt4ConfluenceAPI >> password: anObject [
-	password := anObject
 ]
 
 { #category : #creating }
@@ -98,30 +88,10 @@ Gt4ConfluenceAPI >> uploadFileFrom: filePath inSpaceWithContentID: contentID [
 	'attachment'}.
 
 	^ ZnClient new
-		url: (url asZnUrl addPathSegments: pathSegments yourself);
-		username: username password: password;
+		url: (credentials url asZnUrl addPathSegments: pathSegments yourself);
+		username: credentials username password: credentials password;
 		headerAt: 'X-Atlassian-Token' put: 'nocheck';
 		addPart: (ZnMimePart fieldName: #file fileNamed: filePath);
 		post;
 		response
-]
-
-{ #category : #accessing }
-Gt4ConfluenceAPI >> url [
-	^ url
-]
-
-{ #category : #accessing }
-Gt4ConfluenceAPI >> url: anObject [
-	url := anObject
-]
-
-{ #category : #accessing }
-Gt4ConfluenceAPI >> username [
-	^ username
-]
-
-{ #category : #accessing }
-Gt4ConfluenceAPI >> username: anObject [
-	username := anObject
 ]
