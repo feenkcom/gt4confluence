@@ -25,7 +25,7 @@ Internal Representation and Key Implementation Points.
 Class {
 	#name : #BaselineOfGToolkit4ConfluenceWithoutGT,
 	#superclass : #BaselineOf,
-	#category : #BaselineOfGToolkit4Confluence
+	#category : #BaselineOfGToolkit4ConfluenceWithoutGT
 }
 
 { #category : #baselines }
