@@ -34,5 +34,5 @@ BaselineOfGToolkit4ConfluenceWithoutGT >> baseline: spec [
 	spec
 		for: #common
 		do: [
-			spec package: 'GToolkit4Confluence-API'. ]
+			spec package: 'GToolkit4Confluence-API' ]
 ]
