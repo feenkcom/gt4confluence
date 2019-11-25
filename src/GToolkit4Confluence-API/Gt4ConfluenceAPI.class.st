@@ -157,8 +157,6 @@ Gt4ConfluenceAPI >> updatePageWithId: aPageId withContent: aBody [
 				type: ZnMimeType applicationJson);
 		put;
 			response.
-			
-	self halt.
 	
 	response isSuccess ifFalse: [ ^ nil ].
 	
