@@ -66,11 +66,11 @@ Gt4ConfluenceAPI >> findPageWithTitle: title inSpaceWithContentID: contentID [
 		get;
 		response.
 		
-	response isSuccess ifFalse: [ ^ title, ' not found.' ].
+	response isSuccess ifFalse: [ ^ nil ].
 	
 	results := ((STONJSON fromString: response contents) at: #results).
 	
-	results isEmpty ifTrue: [ ^ title, ' not found.' ].
+	results isEmpty ifTrue: [ ^ nil ].
 		
 	^ (((results at: 1) at: #body) at: #storage) at: #value.
 ]
