@@ -133,8 +133,6 @@ Gt4ConfluenceAPI >> updatePageWithId: aPageId withContent: aBody [
 	
 	versionNumber := result at: #version at: #number.
 	spaceKey := result at: #space at: #key.
-	
-	self halt.
 
 	response := request
 		accept: ZnMimeType applicationJson;
