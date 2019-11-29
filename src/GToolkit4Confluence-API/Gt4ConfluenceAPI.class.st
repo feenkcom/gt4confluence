@@ -166,7 +166,7 @@ Gt4ConfluenceAPI >> updatePageWithId: aPageId withContent: aBody [
 ]
 
 { #category : #creating }
-Gt4ConfluenceAPI >> uploadFileFrom: filePath inSpaceWithKey: contentID [
+Gt4ConfluenceAPI >> uploadFileFrom: filePath forPageWithId: contentID [
 	| pathSegments |
 
 	pathSegments := {
