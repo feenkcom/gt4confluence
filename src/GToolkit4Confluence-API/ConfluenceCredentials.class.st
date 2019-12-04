@@ -19,6 +19,11 @@ ConfluenceCredentials >> password: anObject [
 	password := anObject
 ]
 
+{ #category : #initialization }
+ConfluenceCredentials >> takePasswordFromClipboard [
+	self password: Clipboard clipboardText asString
+]
+
 { #category : #accessing }
 ConfluenceCredentials >> url [
 	^ url
