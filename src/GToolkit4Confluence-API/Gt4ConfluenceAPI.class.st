@@ -54,6 +54,38 @@ Gt4ConfluenceAPI >> credentials: anObject [
 	credentials := anObject
 ]
 
+{ #category : #creating }
+Gt4ConfluenceAPI >> deleteAttachmentsForPageWithId: contentID [
+	| pathSegments attachments response operation |
+
+	pathSegments := {
+		'rest'.
+		'api'.
+		'content'.
+	}.
+
+	operation := ZnClient new
+		username: credentials username password: credentials password;
+		headerAt: 'X-Atlassian-Token' put: 'nocheck'.
+	response := operation
+		url: (credentials url asZnUrl addPathSegments: pathSegments; addPathSegments: { contentID. 'child'. 'attachment'}; yourself);
+		get;
+		response.
+	
+	attachments := ((STONJSON fromString: response contents) at: #results).
+	
+	attachments do: [ :anAttachment | 
+		| aPageId |
+		aPageId := anAttachment at: #id.
+		operation
+			url: (credentials url asZnUrl addPathSegments: pathSegments yourself; addPathSegment: aPageId );
+			delete;
+			response.
+	].
+	
+	
+]
+
 { #category : #find }
 Gt4ConfluenceAPI >> findIdOfPageWithTitle: title inSpaceWithKey: contentID [
 	| pathSegments response results |
