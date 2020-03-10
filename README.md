@@ -4,11 +4,11 @@ This repository offers a high level API for accessing and modifying Confluence c
 
 ## How to load
 
-You can load the whole code in Pharo 7.0 using the following snippet:
+You can load the whole code in a Glamorous Toolkit release using the following snippet:
 
 ```
 Metacello new
-   baseline: 'GToolkit4Confluence';
+   baseline: 'GToolkit4ConfluenceWithoutGT';
    repository: 'github://feenkcom/gt4confluence/src';
    load.
 ```
