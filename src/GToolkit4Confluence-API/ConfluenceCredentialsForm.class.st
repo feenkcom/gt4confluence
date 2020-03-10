@@ -47,8 +47,7 @@ ConfluenceCredentialsForm >> buildForClass: aClass [
 						password: (self textInInput: password).
 					self saveConfluenceSpaceName: (self textInInput: confluenceSpaceName) 
 						andPageName: (self textInInput: confluencePageName) forClass: aClass.
-					
-					self halt.
+
 					aDocument := GtDocument forClass: aClass.
 					aDocument exportToConfluencePage: (self textInInput: confluencePageName) inSpace: (self textInInput: confluenceSpaceName).
 		]).
