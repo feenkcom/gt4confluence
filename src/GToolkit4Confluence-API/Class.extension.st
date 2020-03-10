@@ -6,6 +6,6 @@ Class >> gtExportToConfluenceFor: anAction [
 	^ anAction dropdown 
 		icon: BrGlamorousIcons tocloud asElement;
 		label: nil;
-		content: [ :b | ConfluenceCredentialsForm new build. ];
+		content: [ :b | ConfluenceCredentialsForm new buildForClass: self ];
 		forViewDefinedIn: #gtDocumentFor:
 ]
