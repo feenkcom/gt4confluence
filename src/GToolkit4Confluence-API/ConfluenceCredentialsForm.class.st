@@ -7,9 +7,9 @@ Class {
 { #category : #building }
 ConfluenceCredentialsForm >> build [
 	| confluenceDetails pageDetails url password username confluenceSpaceName confluencePageName |
-	url := self buildInputWithLabel: 'URL:'.
-	username := self buildInputWithLabel: 'Username:'.
-	password := self buildInputWithLabel: 'Password:'.
+	url := self buildInputWithLabel: 'URL:' andInitialValue: ConfluenceConnection setup url.
+	username := self buildInputWithLabel: 'Username:' andInitialValue: ConfluenceConnection setup username.
+	password := self buildInputWithLabel: 'Password:' andInitialValue: ConfluenceConnection setup password.
 	
 	confluenceSpaceName := self buildInputWithLabel: 'Space name:'.
 	confluencePageName := self buildInputWithLabel: 'Page name:'.
@@ -50,9 +50,9 @@ ConfluenceCredentialsForm >> build [
 				label: 'Save'; 
 				action: [
 					ConfluenceConnection setup
-						url: (url at: 2) text asString;
-						username: (username at: 2) text asString;
-						password: (password at: 2) text asString.
+						url: (url at: 2) editor text asString;
+						username: (username at: 2) editor text asString;
+						password: (password at: 2) editor text asString.
 		]).
 ]
 
@@ -68,6 +68,23 @@ ConfluenceCredentialsForm >> buildInputWithLabel: aLabel [
 					c horizontal matchParent.
 					c vertical fitContent ];
 				margin: (BlInsets bottom: 1).
+		}.
+]
+
+{ #category : #building }
+ConfluenceCredentialsForm >> buildInputWithLabel: aLabel andInitialValue: aTextValue [ 
+	self halt.
+	^ { 
+			BrLabel new look: (BrGlamorousLabelLook new foreground: Color gray);
+				padding: (BlInsets top: 0 right: 20 bottom: 2 left: 0);
+				text: (aLabel asRopedText glamorousRegularFont readonly).
+			BrEditor new 
+				look: BrGlamorousInputFieldSpacingLook;
+				constraintsDo: [ :c |
+					c horizontal matchParent.
+					c vertical fitContent ];
+				margin: (BlInsets bottom: 1);
+				text: aTextValue asRopedText.
 		}.
 ]
 
