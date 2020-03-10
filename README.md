@@ -8,7 +8,7 @@ You can load the whole code in Pharo 7.0 using the following snippet:
 
 ```
 Metacello new
-   baseline: 'GToolkit4Confluence';
+   baseline: 'GToolkit4ConfluenceWithoutGT';
    repository: 'github://feenkcom/gt4confluence/src';
    load.
 ```
