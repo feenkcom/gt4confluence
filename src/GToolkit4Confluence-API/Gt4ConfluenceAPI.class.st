@@ -148,6 +148,41 @@ Gt4ConfluenceAPI >> findPageWithTitle: title inSpaceWithKey: contentID [
 	^ (results at: 1) at: #id.
 ]
 
+{ #category : #'as yet unclassified' }
+Gt4ConfluenceAPI >> findXdocForPageWithId: contentID [
+	| attachmentPathSegments response result |
+	attachmentPathSegments := {
+	'rest'.
+	'api'.
+	'content'.
+	contentID.
+	'child'.
+	'attachment'}.
+
+	response := ZnClient new
+		url: (credentials url asZnUrl addPathSegments: attachmentPathSegments yourself);
+		username: credentials username password: credentials password;
+		headerAt: 'X-Atlassian-Token' put: 'nocheck';
+		get;
+		response.
+		
+	response isSuccess ifFalse: [ ^ nil ].
+	
+	result := STONJSON fromString: response contents.
+	
+	result isEmpty ifTrue: [ ^ nil ].
+	
+	(result at: #results) do: [ :anAttachment |
+		| labels |
+		labels := ((anAttachment at: #metadata) at: #labels) at: #results.
+		labels do: [ : aLabel |
+			(aLabel at: #name) = 'xdoc' ifTrue: [ 
+				^ anAttachment at: #id.
+			 ].
+		].
+	 ].
+]
+
 { #category : #creating }
 Gt4ConfluenceAPI >> updatePageWithId: aPageId withContent: aBody [
 	"update the content of the specified Confluence page"
