@@ -217,3 +217,52 @@ Gt4ConfluenceAPI >> uploadFileFrom: filePath forPageWithId: contentID [
 		post;
 		response
 ]
+
+{ #category : #creating }
+Gt4ConfluenceAPI >> uploadFileFrom: filePath withLabel: aLabel forPageWithId: contentID [
+	| attachmentPathSegments labelPathSegments response result |
+
+	attachmentPathSegments := {
+	'rest'.
+	'api'.
+	'content'.
+	contentID.
+	'child'.
+	'attachment'}.
+
+	response := ZnClient new
+		url: (credentials url asZnUrl addPathSegments: attachmentPathSegments yourself);
+		username: credentials username password: credentials password;
+		headerAt: 'X-Atlassian-Token' put: 'nocheck';
+		addPart: (ZnMimePart fieldName: #file fileNamed: filePath);
+		post;
+		response.
+	
+	response isSuccess ifFalse: [ ^ nil ].
+	
+	result := STONJSON fromString: response contents.
+	
+	result isEmpty ifTrue: [ ^ nil ].
+	
+	labelPathSegments := {
+	'rest'.
+	'api'.
+	'content'.
+	((result at: #results) at: 1) at: #id.
+	'label'.}.
+	
+	^ ZnClient new
+		url: (credentials url asZnUrl addPathSegments: labelPathSegments yourself);
+		username: credentials username password: credentials password;
+		headerAt: 'X-Atlassian-Token' put: 'nocheck';
+		entity:
+			(ZnEntity
+				with:
+					(STONJSON
+						toString:
+							{('prefix' -> 'global').
+							('name' -> aLabel).} asDictionary)
+				type: ZnMimeType applicationJson);
+		post;
+		response. 
+]

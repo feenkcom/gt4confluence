@@ -38,7 +38,7 @@ GtDocument >> exportToConfluencePage: pageName inSpace: spaceName [
 	 	].
 	 ].
 	
-	confluence uploadFileFrom: fileName forPageWithId: pageId.
+	confluence uploadFileFrom: fileName withLabel: 'xdoc' forPageWithId: pageId.
 	
 	result ifNil: [ self inform: 'Error exporting page' ] ifNotNil: [ self inform: 'Successfully exported page' ].
 	
