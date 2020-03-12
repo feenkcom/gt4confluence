@@ -86,6 +86,19 @@ Gt4ConfluenceAPI >> deleteAttachmentsForPageWithId: contentID [
 	
 ]
 
+{ #category : #'as yet unclassified' }
+Gt4ConfluenceAPI >> downloadXdocFromURL: anUrl to: aLocation [
+	anUrl asZnUrl queryAt: #pageId ifPresent: [ :pageId |
+		| xdocUrl |
+		xdocUrl := self findXdocForPageWithId: pageId.
+		ZnClient new
+			url: (xdocUrl asZnUrl inContextOf: credentials url asZnUrl);
+			username: credentials username password: credentials password;
+			headerAt: 'X-Atlassian-Token' put: 'nocheck';
+			downloadTo: aLocation.
+	]
+]
+
 { #category : #find }
 Gt4ConfluenceAPI >> findIdOfPageWithTitle: title inSpaceWithKey: contentID [
 	| pathSegments response results |
@@ -148,7 +161,7 @@ Gt4ConfluenceAPI >> findPageWithTitle: title inSpaceWithKey: contentID [
 	^ (results at: 1) at: #id.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #find }
 Gt4ConfluenceAPI >> findXdocForPageWithId: contentID [
 	| attachmentPathSegments response result |
 	attachmentPathSegments := {
@@ -177,7 +190,7 @@ Gt4ConfluenceAPI >> findXdocForPageWithId: contentID [
 		labels := ((anAttachment at: #metadata) at: #labels) at: #results.
 		labels do: [ : aLabel |
 			(aLabel at: #name) = 'xdoc' ifTrue: [ 
-				^ anAttachment at: #id.
+				^ anAttachment at: #_links at: #download.
 			 ].
 		].
 	 ].
