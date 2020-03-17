@@ -2,15 +2,17 @@ Extension { #name : #GtDocument }
 
 { #category : #'*GToolkit4Confluence-API' }
 GtDocument >> exportToConfluencePage: pageName inSpace: spaceName [
-	| credentials confluence pageId anXdFile aDocument attachments confluenceFile result attachmentsForDocument  attachmentsDir |
+	| fileName credentials confluence pageId anXdFile aDocument attachments confluenceFile result attachmentsForDocument  attachmentsDir |
 	credentials := ConfluenceConnection setup.
 	confluence := Gt4ConfluenceAPI  new 
 		credentials: credentials.
 	pageId := confluence findIdOfPageWithTitle: pageName inSpaceWithKey: spaceName.
 	pageId ifNil: [ pageId := confluence createPageWithTitle: pageName withBody: '<p></p>' inSpaceWithKey: spaceName. ].
 	
+	fileName := FileSystem memory workingDirectory / pageName, 'xdoc'.
+	
 	anXdFile := XdWriter new
-		streamingStrategy: XdStreamingStrategy bytes;
+		streamingStrategy: (XdStreamingStrategy file: fileName);
 		document: self;
 		documentConfluence: self;
 		write.
@@ -35,6 +37,8 @@ GtDocument >> exportToConfluencePage: pageName inSpace: spaceName [
 			confluence uploadFileFrom: anAttachment forPageWithId: pageId
 	 	].
 	 ].
+	
+	confluence uploadFileFrom: fileName withLabel: 'xdoc' forPageWithId: pageId.
 	
 	result ifNil: [ self inform: 'Error exporting page' ] ifNotNil: [ self inform: 'Successfully exported page' ].
 	

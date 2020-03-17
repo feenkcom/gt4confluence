@@ -86,6 +86,19 @@ Gt4ConfluenceAPI >> deleteAttachmentsForPageWithId: contentID [
 	
 ]
 
+{ #category : #'as yet unclassified' }
+Gt4ConfluenceAPI >> downloadXdocFromURL: anUrl to: aLocation [
+	anUrl asZnUrl queryAt: #pageId ifPresent: [ :pageId |
+		| xdocUrl |
+		xdocUrl := self findXdocForPageWithId: pageId.
+		ZnClient new
+			url: (xdocUrl asZnUrl inContextOf: credentials url asZnUrl);
+			username: credentials username password: credentials password;
+			headerAt: 'X-Atlassian-Token' put: 'nocheck';
+			downloadTo: aLocation.
+	]
+]
+
 { #category : #find }
 Gt4ConfluenceAPI >> findIdOfPageWithTitle: title inSpaceWithKey: contentID [
 	| pathSegments response results |
@@ -146,6 +159,41 @@ Gt4ConfluenceAPI >> findPageWithTitle: title inSpaceWithKey: contentID [
 	results isEmpty ifTrue: [ ^ nil ].
 
 	^ (results at: 1) at: #id.
+]
+
+{ #category : #find }
+Gt4ConfluenceAPI >> findXdocForPageWithId: contentID [
+	| attachmentPathSegments response result |
+	attachmentPathSegments := {
+	'rest'.
+	'api'.
+	'content'.
+	contentID.
+	'child'.
+	'attachment'}.
+
+	response := ZnClient new
+		url: (credentials url asZnUrl addPathSegments: attachmentPathSegments yourself);
+		username: credentials username password: credentials password;
+		headerAt: 'X-Atlassian-Token' put: 'nocheck';
+		get;
+		response.
+		
+	response isSuccess ifFalse: [ ^ nil ].
+	
+	result := STONJSON fromString: response contents.
+	
+	result isEmpty ifTrue: [ ^ nil ].
+	
+	(result at: #results) do: [ :anAttachment |
+		| labels |
+		labels := ((anAttachment at: #metadata) at: #labels) at: #results.
+		labels do: [ : aLabel |
+			(aLabel at: #name) = 'xdoc' ifTrue: [ 
+				^ anAttachment at: #_links at: #download.
+			 ].
+		].
+	 ].
 ]
 
 { #category : #creating }
@@ -216,4 +264,53 @@ Gt4ConfluenceAPI >> uploadFileFrom: filePath forPageWithId: contentID [
 		addPart: (ZnMimePart fieldName: #file fileNamed: filePath);
 		post;
 		response
+]
+
+{ #category : #creating }
+Gt4ConfluenceAPI >> uploadFileFrom: filePath withLabel: aLabel forPageWithId: contentID [
+	| attachmentPathSegments labelPathSegments response result |
+
+	attachmentPathSegments := {
+	'rest'.
+	'api'.
+	'content'.
+	contentID.
+	'child'.
+	'attachment'}.
+
+	response := ZnClient new
+		url: (credentials url asZnUrl addPathSegments: attachmentPathSegments yourself);
+		username: credentials username password: credentials password;
+		headerAt: 'X-Atlassian-Token' put: 'nocheck';
+		addPart: (ZnMimePart fieldName: #file fileNamed: filePath);
+		post;
+		response.
+	
+	response isSuccess ifFalse: [ ^ nil ].
+	
+	result := STONJSON fromString: response contents.
+	
+	result isEmpty ifTrue: [ ^ nil ].
+	
+	labelPathSegments := {
+	'rest'.
+	'api'.
+	'content'.
+	((result at: #results) at: 1) at: #id.
+	'label'.}.
+	
+	^ ZnClient new
+		url: (credentials url asZnUrl addPathSegments: labelPathSegments yourself);
+		username: credentials username password: credentials password;
+		headerAt: 'X-Atlassian-Token' put: 'nocheck';
+		entity:
+			(ZnEntity
+				with:
+					(STONJSON
+						toString:
+							{('prefix' -> 'global').
+							('name' -> aLabel).} asDictionary)
+				type: ZnMimeType applicationJson);
+		post;
+		response. 
 ]
