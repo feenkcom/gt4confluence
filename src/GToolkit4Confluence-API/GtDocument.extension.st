@@ -11,6 +11,36 @@ GtDocument >> exportToConfluencePage: pageName inSpace: spaceName [
 	
 	fileName := FileSystem memory workingDirectory / pageName, 'xdoc'.
 	
+	self flag: 'XDoc API proposeal [feenkcom/gtoolkit#888]'.
+	"anXdFile := XdFile writer
+		onFileReference: fileName;
+		document: self;
+		documentConfluence: self;
+		write.
+		
+	aContent := anXdFile navigator
+		documentOfType: XdConfluenceType;
+		mainAttachment;
+		string.
+	result := confluence updatePageWithId: pageId withContent: confluenceFile contents.
+
+	theAttachmentAccessors := anXdFile navigator
+		documentOfType: XdConfluenceType;
+		attachments;
+		eachAsDataAccessor;
+		eachAs: [ :eachAttachment | anXdFile navigator startAt: eachAttachment ];
+		find.
+	
+	confluence deleteAttachmentsForPageWithId: pageId.
+	theAttachmentAccessors do: [ :eachDataAccessor |
+		confluence 
+			uploadStream: eachDataAccessor fileName 
+			mimeType: eachDataAccessor mimeType
+			length: eachDataAccessor fileSize
+			forPageWithId: pageId
+		 ].
+	"
+
 	anXdFile := XdWriter new
 		streamingStrategy: (XdStreamingStrategy file: fileName);
 		document: self;
