@@ -3,6 +3,7 @@ Extension { #name : #Class }
 { #category : #'*GToolkit4Confluence-API' }
 Class >> gtExportToConfluenceFor: anAction [
 	<gtAction>
+	(self classVarNamed: #confluencePageName) ifFalse: [ ^ anAction noAction ].
 	^ anAction dropdown 
 		icon: BrGlamorousIcons tocloud asElement;
 		label: nil;
