@@ -38,7 +38,7 @@ ConfluenceCredentialsForm >> buildForClass: aClass [
 				constraintsDo: [ :c |
 					c linear horizontal alignRight ];
 				margin: (BlInsets top: 10 right: 10 bottom: 0 left: 0);
-				look: BrGlamorousButtonWithLabelLook;
+				look: BrGlamorousButtonWithLabelAptitude;
 				label: 'Export'; 
 				action: [
 					ConfluenceConnection setup
@@ -60,7 +60,7 @@ ConfluenceCredentialsForm >> buildInputWithLabel: aLabel andInitialValue: aTextV
 				padding: (BlInsets top: 0 right: 20 bottom: 10 left: 0);
 				text: (aLabel asRopedText glamorousRegularFont readonly).
 			BrEditor new 
-				look: BrGlamorousRegularEditorLook + BrGlamorousInputFieldSpacingLook;
+				look: BrGlamorousRegularEditorAptitude + BrGlamorousInputFieldSpacingAptitude;
 				constraintsDo: [ :c |
 					c horizontal matchParent.
 					c vertical fitContent ];
